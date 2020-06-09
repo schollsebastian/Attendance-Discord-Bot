@@ -1,0 +1,21 @@
+{
+  "name": "presence-bot",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schollsebastian/presence-bot.git"
+  },
+  "author": "Sebastian Scholl <scholl.sebastian@gmx.at> (github.com/schollsebastian)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schollsebastian/presence-bot/issues"
+  },
+  "homepage": "https://github.com/schollsebastian/presence-bot#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  }
+}
