@@ -7,6 +7,7 @@ const client = new Discord.Client();
 const keywords = [ 'anwesenheit', 'attendance' ];
 const roleNames = ['Schüler', 'Student'];
 const emoji = '☑️';
+const minutes = 3;
 
 client.on('ready', () => {
     client.user.setActivity('YOU!', { type: 'WATCHING' });
@@ -50,23 +51,23 @@ function getStudents(guild) {
         students = guild.roles.cache.find(role => role.name === roleNames[i]);
     }
 
-    return students.members.map(member => member.user.id);
+    return students.members;
 }
 
 function checkAttendance(message, students) {
-    sendEmbed('Attendance check', `React with ${emoji} within the next 3 minutes.`, message.channel)
+    sendEmbed('Attendance check', `React with ${emoji} within the next ${minutes} minutes.`, message.channel)
         .then(message => {
             message.react(emoji)
-                .then(() => message.awaitReactions((reaction, user) => filter(reaction, user, students), { time: 180000 })
+                .then(() => message.awaitReactions(() => true, { time: 60000 * minutes / 12 })
                     .then(collected => {
-                        let present = collected.get(emoji).users.cache.values();
                         let absent = [];
 
                         for (const student of students) {
+                            let present = collected.get(emoji).users.cache.values();
                             let isAbsent = true;
 
                             for (const presentStudent of present) {
-                                if (presentStudent.id === student) {
+                                if (presentStudent.id === student[0]) {
                                     isAbsent = false;
                                 }
                             }
@@ -89,8 +90,15 @@ function checkAttendance(message, students) {
 function sendAbsentStudents(students, channel) {
     let content = '';
 
+    students.sort((a, b) => {
+        let aName = a[1].nickname ? a[1].nickname : a[1].user.username;
+        let bName = b[1].nickname ? b[1].nickname : b[1].user.username;
+
+        return aName.localeCompare(bName);
+    });
+
     for (const student of students) {
-        content += `<@${student}>\n`;
+        content += `<@${student[0]}>\n`;
     }
 
     sendEmbed('Absent students', content, channel);
@@ -101,15 +109,10 @@ function sendEmbed(title, content, channel) {
         .setColor('#0099ff')
         .setTitle('Attendance')
         .setURL('https://github.com/schollsebastian/Attendance-Discord-Bot')
-        .setAuthor('Sebastian Scholl', 'https://avatars1.githubusercontent.com/u/43465465', 'https://github.com/schollsebastian')
         .setThumbnail('https://cdn.discordapp.com/app-icons/719873640178516068/1f584420de75f93da54f90dea38a9930.png')
         .addField(title, content)
         .setTimestamp()
 	    .setFooter('created by Sebastian Scholl', 'https://cdn.discordapp.com/app-icons/719873640178516068/1f584420de75f93da54f90dea38a9930.png');
 
     return channel.send(embed);
-}
-
-function filter(reaction, user, students) {
-	return reaction.emoji.name === emoji && students.includes(user.id);
 }
