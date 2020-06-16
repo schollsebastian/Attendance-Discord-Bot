@@ -33,8 +33,9 @@ function containsKeyword(message) {
 
     for (const keyword of keywords) {
         if (
-            message.startsWith(`!${keyword}`)
+            message === `!${keyword}`
             || message.startsWith(`!${keyword} `)
+            || message.endsWith(` !${keyword}`)
             || message.includes(` !${keyword} `)
         ) {
             return true;
