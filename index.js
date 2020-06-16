@@ -57,7 +57,7 @@ function checkAttendance(message, students) {
     sendEmbed('Attendance check', `React with ${emoji} within the next 3 minutes.`, message.channel)
         .then(message => {
             message.react(emoji)
-                .then(() => message.awaitReactions((reaction, user) => filter(reaction, user, students), { time: 180000 / 12 })
+                .then(() => message.awaitReactions((reaction, user) => filter(reaction, user, students), { time: 180000 })
                     .then(collected => {
                         let present = collected.get(emoji).users.cache.values();
                         let absent = [];
