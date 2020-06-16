@@ -58,7 +58,7 @@ function checkAttendance(message, students) {
     sendEmbed('Attendance check', `React with ${emoji} within the next ${minutes} minutes.`, message.channel)
         .then(message => {
             message.react(emoji)
-                .then(() => message.awaitReactions(() => true, { time: 60000 * minutes / 12 })
+                .then(() => message.awaitReactions(() => true, { time: 60000 * minutes })
                     .then(collected => {
                         let absent = [];
 
