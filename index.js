@@ -58,32 +58,32 @@ function getStudents(guild) {
 function checkAttendance(message, students) {
     sendEmbed('Attendance check', `React with ${emoji} within the next ${minutes} minutes.`, message.channel)
         .then(message => {
-            message.react(emoji)
-                .then(() => message.awaitReactions(() => true, { time: 60000 * minutes })
-                    .then(collected => {
-                        let absent = [];
+            message.react(emoji).catch(console.error);
+            message.awaitReactions(() => true, { time: 60000 * minutes })
+                .then(collected => {
+                    let absent = [];
 
-                        for (const student of students) {
-                            let present = collected.get(emoji).users.cache.values();
-                            let isAbsent = true;
+                    for (const student of students) {
+                        let present = collected.get(emoji).users.cache.values();
+                        let isAbsent = true;
 
-                            for (const presentStudent of present) {
-                                if (presentStudent.id === student[0]) {
-                                    isAbsent = false;
-                                }
-                            }
-
-                            if (isAbsent) {
-                                absent.push(student);
+                        for (const presentStudent of present) {
+                            if (presentStudent.id === student[0]) {
+                                isAbsent = false;
                             }
                         }
 
-                        sendAbsentStudents(absent, message.channel);
-                    })
-                    .catch(() => {
-                        sendAbsentStudents(students, message.channel);
-                    }))
-                .catch(console.error);
+                        if (isAbsent) {
+                            absent.push(student);
+                        }
+                    }
+
+                    sendAbsentStudents(absent, message.channel);
+                })
+                .catch(() => {
+                    sendAbsentStudents(students, message.channel);
+                });
+                
         })
         .catch(console.error);
 }
